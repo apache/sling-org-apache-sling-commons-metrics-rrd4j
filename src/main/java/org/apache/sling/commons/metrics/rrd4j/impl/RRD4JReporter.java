@@ -18,6 +18,7 @@
  */
 package org.apache.sling.commons.metrics.rrd4j.impl;
 
+import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Histogram;
@@ -62,6 +63,7 @@ class RRD4JReporter extends ScheduledReporter {
 
     private final Map<String, Integer> dictionary = new HashMap<>();
     private final RrdDb rrdDB;
+    private final Clock clock;
     private long lastSampleTime;
 
     static Builder forRegistry(MetricRegistry metricRegistry) {
@@ -70,6 +72,7 @@ class RRD4JReporter extends ScheduledReporter {
 
     static class Builder {
         private MetricRegistry metricRegistry;
+        private Clock clock = Clock.defaultClock();
         private TimeUnit ratesUnit = TimeUnit.SECONDS;
         private TimeUnit durationUnit = TimeUnit.MICROSECONDS;
         private File path = new File(".");
@@ -144,6 +147,11 @@ class RRD4JReporter extends ScheduledReporter {
             return this;
         }
 
+        Builder withClock(Clock clock) {
+            this.clock = clock;
+            return this;
+        }
+
         Builder convertRatesTo(TimeUnit ratesUnit) {
             this.ratesUnit = ratesUnit;
             return this;
@@ -159,7 +167,7 @@ class RRD4JReporter extends ScheduledReporter {
                 return null;
             }
             return new RRD4JReporter(metricRegistry, "RRD4JReporter", MetricFilter.ALL, ratesUnit, durationUnit,
-                    dictionary, createDef());
+                    dictionary, createDef(), clock);
         }
 
         private String checkDataSource(String ds) throws IllegalArgumentException {
@@ -190,16 +198,23 @@ class RRD4JReporter extends ScheduledReporter {
                   TimeUnit rateUnit,
                   TimeUnit durationUnit,
                   Map<String, Integer> dictionary,
-                  RrdDef rrdDef) throws IOException {
+                  RrdDef rrdDef,
+                  Clock clock) throws IOException {
         super(registry, name, filter, rateUnit, durationUnit);
         this.dictionary.putAll(dictionary);
         this.rrdDB = createDB(rrdDef);
+        this.clock = clock;
         storeDictionary(rrdDef.getPath() + PROPERTIES_SUFFIX);
+        writeUnknownSample();
     }
 
     @Override
     public void close() {
         try {
+            // write an unknown sample before closing the DB
+            if (!rrdDB.isClosed()) {
+                writeUnknownSample();
+            }
             rrdDB.close();
         } catch (IOException e) {
             LOGGER.warn("Closing RRD failed", e);
@@ -213,7 +228,7 @@ class RRD4JReporter extends ScheduledReporter {
                        SortedMap<String, Histogram> histograms,
                        SortedMap<String, Meter> meters,
                        SortedMap<String, Timer> timers) {
-        long sampleTime = System.currentTimeMillis() / 1000;
+        long sampleTime = clock.getTime() / 1000;
         if (sampleTime <= lastSampleTime) {
             // sample at most once a second
             return;
@@ -339,6 +354,12 @@ class RRD4JReporter extends ScheduledReporter {
         try (FileOutputStream out = new FileOutputStream(dictFile)) {
             dict.store(out, "RRD4JReporter dictionary");
         }
+    }
+
+    private void writeUnknownSample() throws IOException {
+        long updateTime = rrdDB.getLastUpdateTime() + 1;
+        rrdDB.createSample(updateTime).update();
+        lastSampleTime = updateTime;
     }
 
     private static RrdDb createDB(RrdDef definition) throws IOException {
