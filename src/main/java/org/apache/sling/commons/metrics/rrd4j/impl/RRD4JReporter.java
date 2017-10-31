@@ -62,6 +62,7 @@ class RRD4JReporter extends ScheduledReporter {
 
     private final Map<String, Integer> dictionary = new HashMap<>();
     private final RrdDb rrdDB;
+    private long lastSampleTime;
 
     static Builder forRegistry(MetricRegistry metricRegistry) {
         return new Builder(metricRegistry);
@@ -212,11 +213,16 @@ class RRD4JReporter extends ScheduledReporter {
                        SortedMap<String, Histogram> histograms,
                        SortedMap<String, Meter> meters,
                        SortedMap<String, Timer> timers) {
+        long sampleTime = System.currentTimeMillis() / 1000;
+        if (sampleTime <= lastSampleTime) {
+            // sample at most once a second
+            return;
+        }
         long time = System.nanoTime();
         int total = gauges.size() + counters.size() + histograms.size() + meters.size() + timers.size();
         int reported = 0;
         try {
-            Sample sample = rrdDB.createSample(System.currentTimeMillis() / 1000);
+            Sample sample = rrdDB.createSample(sampleTime);
             for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
                 reported += update(sample, entry.getKey(), entry.getValue());
             }
@@ -240,6 +246,7 @@ class RRD4JReporter extends ScheduledReporter {
         } catch (IOException e) {
             LOGGER.warn("Unable to write sample to RRD", e);
         } finally {
+            lastSampleTime = sampleTime;
             time = System.nanoTime() - time;
             LOGGER.debug("{} out of {} metrics reported in {} \u03bcs",
                     reported, total, TimeUnit.NANOSECONDS.toMicros(time));
