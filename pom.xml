@@ -28,7 +28,7 @@
 
     <artifactId>org.apache.sling.commons.metrics-rrd4j</artifactId>
     <packaging>bundle</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2</version>
 
     <name>Apache Sling RRD4J metrics reporter</name>
     <description>
@@ -43,7 +43,8 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-metrics-rrd4j.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-metrics-rrd4j.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-commons-metrics-rrd4j.git</url>
-    </scm>
+      <tag>org.apache.sling.commons.metrics-rrd4j-1.0.2</tag>
+  </scm>
 
     <build>
         <plugins>
