@@ -210,6 +210,7 @@ class RRD4JReporter extends ScheduledReporter {
 
     @Override
     public void close() {
+    	super.close();
         try {
             // write an unknown sample before closing the DB
             if (!rrdDB.isClosed()) {
@@ -219,7 +220,6 @@ class RRD4JReporter extends ScheduledReporter {
         } catch (IOException e) {
             LOGGER.warn("Closing RRD failed", e);
         }
-        super.close();
     }
 
     @Override
