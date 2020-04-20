@@ -22,13 +22,12 @@
 
     <parent>
         <groupId>org.apache.sling</groupId>
-        <artifactId>sling</artifactId>
-        <version>31</version>
+        <artifactId>sling-bundle-parent</artifactId>
+        <version>38</version>
         <relativePath/>
     </parent>
 
     <artifactId>org.apache.sling.commons.metrics-rrd4j</artifactId>
-    <packaging>bundle</packaging>
     <version>1.0.3-SNAPSHOT</version>
 
     <name>Apache Sling Commons Metrics RRD4J</name>
@@ -47,27 +46,6 @@
       <tag>HEAD</tag>
   </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Import-Package>
-                            com.mongodb;resolution:=optional,
-                            com.sleepycat.je;resolution:=optional,
-                            sun.misc;resolution:=optional,
-                            sun.nio.ch;resolution:=optional,
-                            *
-                        </Import-Package>
-                        <Embed-Dependency>rrd4j;inline=com/**|org/rrd4j/ConsolFun*|org/rrd4j/DsType*|org/rrd4j/core/**|org/rrd4j/data/**</Embed-Dependency>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
