@@ -31,7 +31,7 @@
     <packaging>bundle</packaging>
     <version>1.0.3-SNAPSHOT</version>
 
-    <name>Apache Sling RRD4J metrics reporter</name>
+    <name>Apache Sling Commons Metrics RRD4J</name>
     <description>
        Stores Metrics to the local filesystem using RRD4J.
     </description>
