@@ -40,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -181,7 +182,7 @@ class RRD4JReporter extends ScheduledReporter {
         }
 
         private RrdDef createDef() {
-            RrdDef def = new RrdDef(path.getPath(), step);
+            RrdDef def = new RrdDef(path.toURI(), step);
             for (String ds : indexedDS) {
                 def.addDatasource(ds);
             }
@@ -204,7 +205,7 @@ class RRD4JReporter extends ScheduledReporter {
         this.dictionary.putAll(dictionary);
         this.rrdDB = createDB(rrdDef);
         this.clock = clock;
-        storeDictionary(rrdDef.getPath() + PROPERTIES_SUFFIX);
+        storeDictionary(Paths.get(rrdDef.getUri()).toString() + PROPERTIES_SUFFIX);
         writeUnknownSample();
     }
 
@@ -363,7 +364,7 @@ class RRD4JReporter extends ScheduledReporter {
     }
 
     private static RrdDb createDB(RrdDef definition) throws IOException {
-        File dbFile = new File(definition.getPath());
+        File dbFile = new File(definition.getUri());
         if (!dbFile.getParentFile().exists()) {
             if (!dbFile.getParentFile().mkdirs()) {
                 throw new IOException("Unable to create directory for RRD file: " + dbFile.getParent());
@@ -371,7 +372,7 @@ class RRD4JReporter extends ScheduledReporter {
         }
         RrdDb db = null;
         if (dbFile.exists()) {
-            db = new RrdDb(definition.getPath());
+            db = RrdDb.of(definition.getUri());
             if (!db.getRrdDef().equals(definition)) {
                 // definition changed -> re-create DB
                 db.close();
