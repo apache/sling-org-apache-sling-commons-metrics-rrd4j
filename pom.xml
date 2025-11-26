@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements.  See the NOTICE file
@@ -31,20 +31,18 @@
     <version>1.0.7-SNAPSHOT</version>
 
     <name>Apache Sling Commons Metrics RRD4J</name>
-    <description>
-       Stores Metrics to the local filesystem using RRD4J.
-    </description>
-
-    <properties>
-        <sling.java.version>8</sling.java.version>
-    </properties>
+    <description>Stores Metrics to the local filesystem using RRD4J.</description>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-metrics-rrd4j.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-commons-metrics-rrd4j.git</developerConnection>
+        <tag>HEAD</tag>
         <url>https://github.com/apache/sling-org-apache-sling-commons-metrics-rrd4j.git</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
+
+    <properties>
+        <sling.java.version>8</sling.java.version>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -18,23 +18,6 @@
  */
 package org.apache.sling.commons.metrics.rrd4j.impl;
 
-import com.codahale.metrics.Clock;
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Histogram;
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.ScheduledReporter;
-import com.codahale.metrics.Timer;
-
-import org.rrd4j.core.Archive;
-import org.rrd4j.core.RrdDb;
-import org.rrd4j.core.RrdDef;
-import org.rrd4j.core.Sample;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,6 +33,22 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
+
+import com.codahale.metrics.Clock;
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.ScheduledReporter;
+import com.codahale.metrics.Timer;
+import org.rrd4j.core.Archive;
+import org.rrd4j.core.RrdDb;
+import org.rrd4j.core.RrdDef;
+import org.rrd4j.core.Sample;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.String.join;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -82,7 +81,7 @@ class RRD4JReporter extends ScheduledReporter {
         private final List<String> archives = new ArrayList<>();
         private int step = DEFAULT_STEP;
 
-        Builder(MetricRegistry metricRegistry ) {
+        Builder(MetricRegistry metricRegistry) {
             this.metricRegistry = metricRegistry;
         }
 
@@ -167,8 +166,15 @@ class RRD4JReporter extends ScheduledReporter {
             if (indexedDS.isEmpty() || archives.isEmpty()) {
                 return null;
             }
-            return new RRD4JReporter(metricRegistry, "RRD4JReporter", MetricFilter.ALL, ratesUnit, durationUnit,
-                    dictionary, createDef(), clock);
+            return new RRD4JReporter(
+                    metricRegistry,
+                    "RRD4JReporter",
+                    MetricFilter.ALL,
+                    ratesUnit,
+                    durationUnit,
+                    dictionary,
+                    createDef(),
+                    clock);
         }
 
         private String checkDataSource(String ds) throws IllegalArgumentException {
@@ -193,14 +199,16 @@ class RRD4JReporter extends ScheduledReporter {
         }
     }
 
-    RRD4JReporter(MetricRegistry registry,
-                  String name,
-                  MetricFilter filter,
-                  TimeUnit rateUnit,
-                  TimeUnit durationUnit,
-                  Map<String, Integer> dictionary,
-                  RrdDef rrdDef,
-                  Clock clock) throws IOException {
+    RRD4JReporter(
+            MetricRegistry registry,
+            String name,
+            MetricFilter filter,
+            TimeUnit rateUnit,
+            TimeUnit durationUnit,
+            Map<String, Integer> dictionary,
+            RrdDef rrdDef,
+            Clock clock)
+            throws IOException {
         super(registry, name, filter, rateUnit, durationUnit);
         this.dictionary.putAll(dictionary);
         this.rrdDB = createDB(rrdDef);
@@ -211,7 +219,7 @@ class RRD4JReporter extends ScheduledReporter {
 
     @Override
     public void close() {
-    	super.close();
+        super.close();
         try {
             // write an unknown sample before closing the DB
             if (!rrdDB.isClosed()) {
@@ -224,11 +232,12 @@ class RRD4JReporter extends ScheduledReporter {
     }
 
     @Override
-    public void report(SortedMap<String, Gauge> gauges,
-                       SortedMap<String, Counter> counters,
-                       SortedMap<String, Histogram> histograms,
-                       SortedMap<String, Meter> meters,
-                       SortedMap<String, Timer> timers) {
+    public void report(
+            SortedMap<String, Gauge> gauges,
+            SortedMap<String, Counter> counters,
+            SortedMap<String, Histogram> histograms,
+            SortedMap<String, Meter> meters,
+            SortedMap<String, Timer> timers) {
         long sampleTime = clock.getTime() / 1000;
         if (sampleTime <= lastSampleTime) {
             // sample at most once a second
@@ -264,8 +273,11 @@ class RRD4JReporter extends ScheduledReporter {
         } finally {
             lastSampleTime = sampleTime;
             time = System.nanoTime() - time;
-            LOGGER.debug("{} out of {} metrics reported in {} \u03bcs",
-                    reported, total, TimeUnit.NANOSECONDS.toMicros(time));
+            LOGGER.debug(
+                    "{} out of {} metrics reported in {} \u03bcs",
+                    reported,
+                    total,
+                    TimeUnit.NANOSECONDS.toMicros(time));
         }
     }
 
@@ -345,7 +357,7 @@ class RRD4JReporter extends ScheduledReporter {
 
     private void storeDictionary(String path) throws IOException {
         File dictFile = new File(path);
-        if (dictFile.exists() && ! dictFile.delete()) {
+        if (dictFile.exists() && !dictFile.delete()) {
             throw new IOException("Unable to delete dictionary file: " + dictFile.getPath());
         }
         Properties dict = new Properties();
@@ -377,8 +389,7 @@ class RRD4JReporter extends ScheduledReporter {
                 // definition changed -> re-create DB
                 db.close();
                 File renamed = renameDB(dbFile);
-                LOGGER.info("Configuration changed, renamed existing RRD file to: {}",
-                        renamed.getPath());
+                LOGGER.info("Configuration changed, renamed existing RRD file to: {}", renamed.getPath());
                 db = null;
             }
         }
@@ -397,7 +408,8 @@ class RRD4JReporter extends ScheduledReporter {
         // rename rrd file
         rename(dbFile.toPath(), dbFile.getName() + suffix(idx));
         // rename properties file
-        rename(dbFile.toPath().resolveSibling(dbFile.getName() + PROPERTIES_SUFFIX),
+        rename(
+                dbFile.toPath().resolveSibling(dbFile.getName() + PROPERTIES_SUFFIX),
                 dbFile.getName() + suffix(idx) + PROPERTIES_SUFFIX);
 
         return new File(dbFile.getParentFile(), dbFile.getName() + suffix(idx));

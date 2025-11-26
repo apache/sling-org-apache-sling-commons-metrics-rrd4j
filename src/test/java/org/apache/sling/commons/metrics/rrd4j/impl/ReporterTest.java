@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
-
 import org.apache.sling.testing.mock.osgi.MockOsgi;
 import org.apache.sling.testing.mock.osgi.junit.OsgiContext;
 import org.junit.Before;
@@ -110,8 +109,8 @@ public class ReporterTest {
     private static Map<String, Object> newConfig() {
         Map<String, Object> properties = new HashMap<>();
         properties.put("step", 1L);
-        properties.put("datasources", new String[]{"DS:sling_myMetric:GAUGE:300:0:U"});
-        properties.put("archives", new String[]{"RRA:AVERAGE:0.5:1:60"});
+        properties.put("datasources", new String[] {"DS:sling_myMetric:GAUGE:300:0:U"});
+        properties.put("archives", new String[] {"RRA:AVERAGE:0.5:1:60"});
         properties.put("path", RRD.getPath());
         return properties;
     }

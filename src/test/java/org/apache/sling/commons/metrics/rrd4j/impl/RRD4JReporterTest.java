@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +40,8 @@ public class RRD4JReporterTest {
         registry.register("myMetric", new TestGauge(42));
         reporter = RRD4JReporter.forRegistry(registry)
                 .withPath(RRD)
-                .withArchives(new String[]{"RRA:AVERAGE:0.5:1:60"})
-                .withDatasources(new String[]{"DS:sling_myMetric:GAUGE:300:0:U"})
+                .withArchives(new String[] {"RRA:AVERAGE:0.5:1:60"})
+                .withDatasources(new String[] {"DS:sling_myMetric:GAUGE:300:0:U"})
                 .withStep(1)
                 .build();
     }
@@ -73,4 +72,3 @@ public class RRD4JReporterTest {
         }
     }
 }
-

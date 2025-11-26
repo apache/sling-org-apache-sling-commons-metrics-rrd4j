@@ -18,20 +18,19 @@
  */
 package org.apache.sling.commons.metrics.rrd4j.impl;
 
+import java.io.File;
+import java.util.Set;
+
+import com.codahale.metrics.MetricRegistry;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.util.Set;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.codahale.metrics.MetricRegistry;
 
 public class InvalidParamsTest {
 
@@ -46,11 +45,15 @@ public class InvalidParamsTest {
         assertFalse(rrd.exists());
 
         int step = -1;
-        String[] datasources = { "DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U" };
-        String[] archives = { "RRA:AVERAGE:0.5:12:360" };
+        String[] datasources = {"DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U"};
+        String[] archives = {"RRA:AVERAGE:0.5:12:360"};
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).withStep(step).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .withStep(step)
+                .build();
         assertNotNull(reporter);
         assertTrue(rrd.exists());
         assertTrue(reporter.getStep() == 5);
@@ -66,10 +69,13 @@ public class InvalidParamsTest {
         assertFalse(rrd.exists());
 
         String[] datasources = null;
-        String[] archives = { "RRA:AVERAGE:0.5:12:360" };
+        String[] archives = {"RRA:AVERAGE:0.5:12:360"};
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .build();
         assertNull(reporter);
         assertFalse(rrd.exists());
     }
@@ -79,11 +85,14 @@ public class InvalidParamsTest {
         File rrd = new File(folder.newFolder("InvalidParamsTest"), "metrics.rrd");
         assertFalse(rrd.exists());
 
-        String[] datasources = { "malformed:input" };
-        String[] archives = { "RRA:AVERAGE:0.5:12:360" };
+        String[] datasources = {"malformed:input"};
+        String[] archives = {"RRA:AVERAGE:0.5:12:360"};
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .build();
         assertNull(reporter);
         assertFalse(rrd.exists());
     }
@@ -93,11 +102,14 @@ public class InvalidParamsTest {
         File rrd = new File(folder.newFolder("InvalidParamsTest"), "metrics.rrd");
         assertFalse(rrd.exists());
 
-        String[] datasources = { "DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U", "malformed:input" };
-        String[] archives = { "RRA:AVERAGE:0.5:12:360" };
+        String[] datasources = {"DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U", "malformed:input"};
+        String[] archives = {"RRA:AVERAGE:0.5:12:360"};
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .build();
         assertNotNull(reporter);
         assertTrue(rrd.exists());
 
@@ -111,11 +123,14 @@ public class InvalidParamsTest {
         File rrd = new File(folder.newFolder("InvalidParamsTest"), "metrics.rrd");
         assertFalse(rrd.exists());
 
-        String[] datasources = { "DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U" };
+        String[] datasources = {"DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U"};
         String[] archives = null;
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .build();
         assertNull(reporter);
         assertFalse(rrd.exists());
     }
@@ -125,11 +140,14 @@ public class InvalidParamsTest {
         File rrd = new File(folder.newFolder("InvalidParamsTest"), "metrics.rrd");
         assertFalse(rrd.exists());
 
-        String[] datasources = { "DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U" };
-        String[] archives = { "malformed:input" };
+        String[] datasources = {"DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U"};
+        String[] archives = {"malformed:input"};
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .build();
         assertNull(reporter);
         assertFalse(rrd.exists());
     }
@@ -139,11 +157,14 @@ public class InvalidParamsTest {
         File rrd = new File(folder.newFolder("InvalidParamsTest"), "metrics.rrd");
         assertFalse(rrd.exists());
 
-        String[] datasources = { "DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U" };
-        String[] archives = { "RRA:AVERAGE:0.5:12:360", "malformed:input" };
+        String[] datasources = {"DS:oak_SESSION_LOGIN_COUNTER:COUNTER:300:0:U"};
+        String[] archives = {"RRA:AVERAGE:0.5:12:360", "malformed:input"};
 
-        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry).withPath(rrd).withDatasources(datasources)
-                .withArchives(archives).build();
+        RRD4JReporter reporter = RRD4JReporter.forRegistry(registry)
+                .withPath(rrd)
+                .withDatasources(datasources)
+                .withArchives(archives)
+                .build();
         assertNotNull(reporter);
         assertTrue(rrd.exists());
         Set<String> archs = reporter.getArchives();
