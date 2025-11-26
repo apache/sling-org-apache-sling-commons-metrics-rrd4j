@@ -43,7 +43,7 @@ class CopyMetricRegistryListener implements MetricRegistryListener {
 
     void stop(MetricRegistry metricRegistry) {
         metricRegistry.removeListener(this);
-        for(String name : metricRegistry.getMetrics().keySet()) {
+        for (String name : metricRegistry.getMetrics().keySet()) {
             removeMetric(name);
         }
     }
@@ -109,5 +109,4 @@ class CopyMetricRegistryListener implements MetricRegistryListener {
     public void onTimerRemoved(String s) {
         removeMetric(s);
     }
-
 }

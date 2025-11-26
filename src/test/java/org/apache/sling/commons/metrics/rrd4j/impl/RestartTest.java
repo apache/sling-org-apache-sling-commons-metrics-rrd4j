@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,9 +94,9 @@ public class RestartTest {
         // check DB
         RrdDb db = new RrdDb(RRD.getPath());
         try {
-            double[] values = db.createFetchRequest(
-                    db.getArchive(0).getConsolFun(), start, end)
-                        .fetchData().getValues("0");
+            double[] values = db.createFetchRequest(db.getArchive(0).getConsolFun(), start, end)
+                    .fetchData()
+                    .getValues("0");
             for (double v : values) {
                 if (Double.isNaN(v)) {
                     continue;
@@ -117,8 +116,8 @@ public class RestartTest {
     private RRD4JReporter createReporter() throws IOException {
         return RRD4JReporter.forRegistry(registry)
                 .withPath(RRD)
-                .withArchives(new String[]{"RRA:AVERAGE:0.5:1:60"})
-                .withDatasources(new String[]{"DS:myCounter:COUNTER:300:0:U"})
+                .withArchives(new String[] {"RRA:AVERAGE:0.5:1:60"})
+                .withDatasources(new String[] {"DS:myCounter:COUNTER:300:0:U"})
                 .withStep(1)
                 .withClock(clock)
                 .build();
